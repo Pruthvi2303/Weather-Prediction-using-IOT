@@ -1,0 +1,72 @@
+def fetch_weather_forecast(api_key, city): 
+base_url = "https://api.openweathermap.org/data/2.5/forecast" 
+params = { 
+"q": city, 
+"units": "metric", 
+"cnt": 40, 
+"appid": api_key 
+} 
+response = requests.get(base_url, params=params) 
+if response.status_code == 200: 
+data = response.json() 
+forecasts = parse_weather_forecast(data) 
+return forecasts 
+else: 
+print(f"Failed to fetch data: {response.status_code}") 
+return None 
+def parse_weather_forecast(data): 
+forecasts = [] 
+for forecast in data['list']: 
+timestamp = forecast['dt'] 
+date = datetime.utcfromtimestamp(timestamp) 
+temperature = forecast['main']['temp'] 
+description = forecast['weather'][0]['description'] 
+forecasts.append({ 
+'date': date, 
+'temperature': temperature, 
+'description': description 
+}) 
+return forecasts 
+def print_forecasts(forecasts): 
+for forecast in forecasts: 
+print(f"{forecast['date'].strftime('%Y-%m-%d %H:%M:%S')}: " 
+f"{forecast['temperature']}°C, {forecast['description']}") 
+if __name__ == "__main__": 
+api_key = 'ff5f0712777f48abdd84b0d3360c082d' 
+city = 'Bengaluru' 
+forecasts = fetch_weather_forecast(api_key, city) 
+if forecasts: 
+print_forecasts(forecasts) 
+soil_moisture = 10 
+next_data = [] 
+for forecast in forecasts: 
+next_data.append(forecast['description']) 
+next_data = next_data[:3] 
+statement = 0 
+if soil_moisture < 60: 
+statement = "NO need to water plants" 
+elif 30 <= soil_moisture <= 50: 
+if [x for x in next_data if x == "light rain" or x == "moderate rain"]: 
+statement = "No need to water plants" 
+else: 
+statement = "Water plants" 
+elif 10 <= soil_moisture <= 30: 
+if [x for x in next_data if x == "light rain" or x == "moderate rain"]: 
+statement = "No need to water plants" 
+else: 
+statement = "Water plants" 
+else: 
+statement = "water plants " 
+print(statement) 
+from tkinter import * 
+PINK = "#e2979c" 
+RED = "#e7305b" 
+GREEN = "#9bdeac" 
+YELLOW = "#f7f5dd" 
+FONT_NAME = "Courier" 
+window = Tk() 
+window.title("Irrigation_Indicator") 
+window.config(padx=100, pady=50, bg=YELLOW) 
+label = Label(text=statement, fg=GREEN, bg=YELLOW, font=(FONT_NAME, 55, "bold")) 
+label.grid(row=1, column=2) 
+window.mainloop()
