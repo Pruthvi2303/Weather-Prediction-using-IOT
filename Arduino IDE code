@@ -1,0 +1,19 @@
+#define ledPin 6 
+#define sensorPin A0 
+void setup() { 
+Serial.begin(9600);  // Initialize serial communication at 9600 baud rate 
+pinMode(ledPin, OUTPUT);  // Set the LED pin as an output 
+digitalWrite(ledPin, LOW);  // Ensure the LED is off at startup 
+} 
+void loop() { 
+Serial.println(readSensor());  // Read sensor value and print to Serial Monitor 
+delay(500);  // Wait for half a second before the next reading 
+} 
+int readSensor() { 
+int sensorValue = analogRead(sensorPin);  // Read the analog value from the sensor 
+int outputValue = map(sensorValue, 0, 1023, 255, 0);  // Map the 10-bit sensor value to an 8-bit 
+value (0-255) 
+analogWrite(ledPin, outputValue);  // Write the mapped value to the LED pin to generate a PWM 
+signal 
+return outputValue;  // Return the mapped sensor value 
+} 
